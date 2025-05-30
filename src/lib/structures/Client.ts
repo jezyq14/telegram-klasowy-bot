@@ -17,7 +17,8 @@ export class Client extends Telegraf {
 
     public init() {
         this.use((ctx, next) => {
-            console.log((ctx.update as any).message);
+            // TODO: Implement middleware logic if needed
+
             return next();
         });
 

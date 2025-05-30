@@ -1,0 +1,30 @@
+{
+  "name": "telegram-klasowy-bot",
+  "version": "1.0.0",
+  "description": "Bot na telegrama klasowego",
+  "keywords": [
+    "bot",
+    "telegram",
+    "nodejs"
+  ],
+  "homepage": "https://github.com/jezyq14/telegram-klasowy-bot#readme",
+  "bugs": {
+    "url": "https://github.com/jezyq14/telegram-klasowy-bot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jezyq14/telegram-klasowy-bot.git"
+  },
+  "license": "MIT",
+  "author": "jezyq14",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}

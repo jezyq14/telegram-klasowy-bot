@@ -1,3 +1,3 @@
-import { Client } from "./lib/structures";
+import { Client } from "./lib";
 
 new Client();

@@ -3,6 +3,12 @@ import config from "../../config";
 
 export class Client extends Telegraf {
     constructor() {
+        if (!config.token) {
+            throw new Error(
+                "Telegram bot token is not provided in the configuration. Please set the TELEGRAM_BOT_TOKEN environment variable."
+            );
+        }
+
         super(config.token);
 
         process.once("SIGINT", () => this.stop("SIGINT"));
@@ -30,7 +36,7 @@ export class Client extends Telegraf {
         }
     }
 
-    public async luckyNumbersHandler() {
+    public async handleLuckyNumbers() {
         // TODO: Implement the lucky numbers handler
     }
 }

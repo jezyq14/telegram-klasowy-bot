@@ -1,7 +1,8 @@
 import { Telegraf } from "telegraf";
-import config from "../../config";
+import cron from "node-cron";
 
-import { getLuckyNumbers } from "..";
+import { sendLuckyNumbers } from "..";
+import config from "../../config";
 
 export class Client extends Telegraf {
     constructor() {
@@ -47,17 +48,10 @@ export class Client extends Telegraf {
             );
         }
 
-        const data = await getLuckyNumbers();
+        cron.schedule("1 18 * 1-6,9-12 1-5", async () => {
+            await sendLuckyNumbers(this);
+        });
 
-        const message = `Szczęśliwe numerki na ${
-            data.dayOfTheWeek
-        }: ${data.luckyNumbers.join(", ")}`;
-
-        try {
-            await this.telegram.sendMessage(config.chatId, message);
-            console.log("Lucky numbers sent successfully.");
-        } catch (err) {
-            console.error("Failed to send lucky numbers:", err);
-        }
+        console.log("Scheduled task for lucky numbers is set up.");
     }
 }

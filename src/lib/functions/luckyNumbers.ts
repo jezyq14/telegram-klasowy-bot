@@ -1,5 +1,6 @@
 import config from "../../config";
 import * as cheerio from "cheerio";
+import { Client } from "../structures";
 
 export interface GetLuckyNumbersData {
     luckyNumbers: number[];
@@ -31,4 +32,22 @@ export const getLuckyNumbers = async (): Promise<GetLuckyNumbersData> => {
     output.dayOfTheWeek = $("#rest .date .month").first().text().trim();
 
     return output;
+};
+
+export const sendLuckyNumbers = async (
+    client: Client,
+    chatId: string = config.chatId
+): Promise<void> => {
+    const data = await getLuckyNumbers();
+
+    const message = `Szczęśliwe numerki na ${
+        data.dayOfTheWeek
+    }: ${data.luckyNumbers.join(", ")}`;
+
+    try {
+        await client.telegram.sendMessage(chatId, message);
+        console.log("Lucky numbers sent successfully.");
+    } catch (err) {
+        console.error("Failed to send lucky numbers:", err);
+    }
 };

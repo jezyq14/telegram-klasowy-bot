@@ -1,6 +1,8 @@
 import { Telegraf } from "telegraf";
 import config from "../../config";
 
+import { getLuckyNumbers } from "..";
+
 export class Client extends Telegraf {
     constructor() {
         if (!config.token) {
@@ -31,12 +33,31 @@ export class Client extends Telegraf {
         try {
             this.launch();
             console.log("Bot is running...");
+
+            this.handleLuckyNumbers();
         } catch (err) {
             console.error("Failed to launch bot:", err);
         }
     }
 
     public async handleLuckyNumbers() {
-        // TODO: Implement the lucky numbers handler
+        if (!config.chatId) {
+            throw new Error(
+                "Telegram chat ID is not configured. You need to set the TELEGRAM_CHAT_ID in your environment variables."
+            );
+        }
+
+        const data = await getLuckyNumbers();
+
+        const message = `Szczęśliwe numerki na ${
+            data.dayOfTheWeek
+        }: ${data.luckyNumbers.join(", ")}`;
+
+        try {
+            await this.telegram.sendMessage(config.chatId, message);
+            console.log("Lucky numbers sent successfully.");
+        } catch (err) {
+            console.error("Failed to send lucky numbers:", err);
+        }
     }
 }

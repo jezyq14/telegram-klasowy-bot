@@ -1,3 +1,3 @@
 import { Client } from "./lib";
 
-new Client();
+export const client = new Client();

@@ -4,8 +4,11 @@ import cron from "node-cron";
 import { sendLuckyNumbers } from "..";
 import config from "../../config";
 import { glob } from "glob";
+import { VulcanHebeCe, Keypair, VulcanJwtRegister } from "hebece";
 
 export class Client extends Telegraf {
+    public hebece!: VulcanHebeCe;
+
     constructor() {
         if (!config.token) {
             throw new Error(
@@ -36,6 +39,8 @@ export class Client extends Telegraf {
             await this.handleCommands();
             await this.handleLuckyNumbers();
 
+            await this.loginIntoHebece();
+
             this.launch();
             console.log("Bot is running...");
         } catch (err) {
@@ -44,7 +49,7 @@ export class Client extends Telegraf {
     }
 
     public async handleLuckyNumbers() {
-        if (!config.chatId) {
+        if (!config.telegram.chatId) {
             throw new Error(
                 "Telegram chat ID is not configured. You need to set the TELEGRAM_CHAT_ID in your environment variables."
             );
@@ -63,5 +68,16 @@ export class Client extends Telegraf {
         files.forEach(async (file) => {
             await import(file);
         });
+    }
+
+    public async loginIntoHebece() {
+        const keypair = await new Keypair().init();
+        await new VulcanJwtRegister(keypair, config.vulcanApiApContent).init();
+
+        this.hebece = new VulcanHebeCe(keypair);
+
+        await this.hebece.connect();
+
+        await this.hebece.selectStudent();
     }
 }

@@ -5,7 +5,7 @@ import { client } from "../..";
 export class Command {
     constructor(
         public name: string,
-        public run: (ctx: Context) => Promise<void>
+        public run: (ctx: Context) => Promise<void | any>
     ) {
         client.command(name, async (ctx) => {
             try {

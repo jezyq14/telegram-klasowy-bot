@@ -36,7 +36,7 @@ export const getLuckyNumbers = async (): Promise<GetLuckyNumbersData> => {
 
 export const sendLuckyNumbers = async (
     client: Client,
-    chatId: string = config.chatId
+    chatId: string = config.telegram.chatId
 ): Promise<void> => {
     const message = await getLuckyNumbersMessage();
 

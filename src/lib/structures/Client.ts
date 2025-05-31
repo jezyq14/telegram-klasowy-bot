@@ -3,6 +3,7 @@ import cron from "node-cron";
 
 import { sendLuckyNumbers } from "..";
 import config from "../../config";
+import { glob } from "glob";
 
 export class Client extends Telegraf {
     constructor() {
@@ -24,7 +25,7 @@ export class Client extends Telegraf {
         this.init();
     }
 
-    public init() {
+    public async init() {
         this.use((ctx, next) => {
             // TODO: Implement middleware logic if needed
 
@@ -32,10 +33,11 @@ export class Client extends Telegraf {
         });
 
         try {
+            await this.handleCommands();
+            await this.handleLuckyNumbers();
+
             this.launch();
             console.log("Bot is running...");
-
-            this.handleLuckyNumbers();
         } catch (err) {
             console.error("Failed to launch bot:", err);
         }
@@ -53,5 +55,13 @@ export class Client extends Telegraf {
         });
 
         console.log("Scheduled task for lucky numbers is set up.");
+    }
+
+    public async handleCommands() {
+        const files = await glob(`${__dirname}/../../commands/*.{js,ts}`);
+
+        files.forEach(async (file) => {
+            await import(file);
+        });
     }
 }

@@ -38,11 +38,7 @@ export const sendLuckyNumbers = async (
     client: Client,
     chatId: string = config.chatId
 ): Promise<void> => {
-    const data = await getLuckyNumbers();
-
-    const message = `Szczęśliwe numerki na ${
-        data.dayOfTheWeek
-    }: ${data.luckyNumbers.join(", ")}`;
+    const message = await getLuckyNumbersMessage();
 
     try {
         await client.telegram.sendMessage(chatId, message);
@@ -50,4 +46,12 @@ export const sendLuckyNumbers = async (
     } catch (err) {
         console.error("Failed to send lucky numbers:", err);
     }
+};
+
+export const getLuckyNumbersMessage = async () => {
+    const data = await getLuckyNumbers();
+
+    return `Szczęśliwe numerki na ${
+        data.dayOfTheWeek
+    }: ${data.luckyNumbers.join(", ")}`;
 };

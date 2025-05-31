@@ -12,7 +12,9 @@ export class Command {
                 await this.run(ctx);
             } catch (error) {
                 console.error(`Error executing command ${this.name}:`, error);
-                await ctx.reply("Panie majster wywaliło błąd.");
+                await ctx.reply(
+                    "Code broke, very sad. Buy 2003 Toyota Corolla to fix."
+                );
             }
         });
     }

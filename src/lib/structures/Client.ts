@@ -8,6 +8,7 @@ import { VulcanHebeCe, Keypair, VulcanJwtRegister } from "hebece";
 
 export class Client extends Telegraf {
     public hebece!: VulcanHebeCe;
+    public hebece2!: VulcanHebeCe;
     public commands: Map<string, CommandData> = new Map();
 
     constructor() {
@@ -94,12 +95,21 @@ export class Client extends Telegraf {
 
     public async loginIntoHebece() {
         const keypair = await new Keypair().init();
+        const keypair2 = await new Keypair().init();
+
         await new VulcanJwtRegister(keypair, config.vulcanApiApContent).init();
+        await new VulcanJwtRegister(
+            keypair2,
+            config.vulcanApiAp2Content
+        ).init();
 
         this.hebece = new VulcanHebeCe(keypair);
+        this.hebece2 = new VulcanHebeCe(keypair2);
 
         await this.hebece.connect();
-
         await this.hebece.selectStudent();
+
+        await this.hebece2.connect();
+        await this.hebece2.selectStudent();
     }
 }

@@ -30,7 +30,7 @@ const getLessonDisplay = (lesson: LessonEnvelope) => {
         l.Substitution.TeacherPrimary &&
         l.Substitution.Subject
     )
-        lessonDisplay += `${l.Subject.Name} (${l.TeacherPrimary.DisplayName}) -> *${l.Substitution.Subject.Name}* (*${l.Substitution.TeacherPrimary.DisplayName}*)`;
+        lessonDisplay += `${l.Subject.Name} -> *${l.Substitution.Subject.Name}* (*${l.Substitution.TeacherPrimary.DisplayName}*)`;
     /* Pozostałe */ else {
         lessonDisplay += `${l.Subject.Name} -> *${l.Substitution.TeacherAbsenceEffectName}*`;
     }

@@ -2,7 +2,7 @@ import { Context } from "telegraf";
 
 import { client } from "../..";
 
-type CommandData = {
+export type CommandData = {
     name: string;
     description?: string;
     usage?: string;
@@ -28,5 +28,7 @@ export class Command {
                 );
             }
         });
+
+        client.commands.set(this.data.name, this.data);
     }
 }

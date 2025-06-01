@@ -5,7 +5,8 @@ Prosty bot do telegrama klasowego (nisko jakościowy kod, proszę nie gryść)
 ## Ficzury:
 
 -   Wysyłanie szczęśliwych numerków na grupę
+-   Komenda do wysyłania zastępstw z określonego przedziału
 
 ## Plany:
 
--   Wysyłanie zastępstw z dziennika VULCAN
+-   Automatyczne wysyłanie zastępstw

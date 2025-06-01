@@ -75,64 +75,80 @@ new Command(
             .slice(1);
 
         try {
-                    const fromDate = args[0]
-            ? getDateFromDDMMYYYYFormat(args[0])
-            : new Date();
-        const toDate = args[1]
-            ? getDateFromDDMMYYYYFormat(args[1])
-            : new Date(fromDate.getTime() + 24 * 60 * 60 * 1000);
+            const fromDate = args[0]
+                ? getDateFromDDMMYYYYFormat(args[0])
+                : new Date();
+            const toDate = args[1]
+                ? getDateFromDDMMYYYYFormat(args[1])
+                : new Date(fromDate.getTime() + 24 * 60 * 60 * 1000);
 
-        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-            return ctx.reply(
-                "Komputer pokładowy Toyoty ma ustawioną nieprawidłową datę. Użyj dat w formacie DD.MM.YYYY."
-            );
-        }
-
-        try {
-            const changedLessons = (
-                await client.hebece.getChangedLessons(fromDate, toDate)
-            ).Envelope.filter((lesson) => !!lesson.Change).sort(
-                (a, b) => a.Date.Timestamp - b.Date.Timestamp
-            );
-
-            const lessonsByDate = changedLessons.reduce((acc, lesson) => {
-                const dateKey = `${lesson.Date.DateDisplay},${lesson.Date.Date}`;
-
-                if (!acc[dateKey]) {
-                    acc[dateKey] = [];
-                }
-
-                acc[dateKey].push(lesson);
-                return acc;
-            }, {} as Record<string, LessonEnvelope[]>);
-
-            const response = Object.entries(lessonsByDate).map(
-                ([date, lessons]) => {
-                    const splittedDate = date.split(",");
-
-                    const displayDate = splittedDate[0];
-                    const dateObj = new Date(splittedDate[1]);
-                    const dayOfWeek = daysOfTheWeek[dateObj.getDay()];
-
-                    const lessonsDisplay = lessons
-                        .map(getLessonDisplay)
-                        .join("\n");
-                    return `*${displayDate} (${dayOfWeek})*\n${lessonsDisplay}`;
-                }
-            );
-
-            if (response.length > 0) {
-                return ctx.reply(response.join("\n\n"), {
-                    parse_mode: "Markdown",
-                });
-            } else {
-                return ctx.reply("W Toyocie nie ma płynu do kierunkowskazów.");
+            if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+                return ctx.reply(
+                    "Komputer pokładowy Toyoty ma ustawioną nieprawidłową datę. Użyj dat w formacie DD.MM.YYYY."
+                );
             }
-        } catch (err) {
-            return ctx.reply(
-                "Komputer pokładowy Toyoty dostał nieprawidłową datę."
-            );
-        }
+
+            try {
+                const changedLessons1 = (
+                    await client.hebece.getChangedLessons(fromDate, toDate)
+                ).Envelope.filter((lesson) => !!lesson.Change);
+
+                const changedLessons2 = (
+                    await client.hebece2.getChangedLessons(fromDate, toDate)
+                ).Envelope.filter((lesson) => !!lesson.Change);
+
+                const lessonsMap = new Map<number, LessonEnvelope>();
+                [...changedLessons1, ...changedLessons2].forEach((lesson) => {
+                    lessonsMap.set(lesson.Id, lesson);
+                });
+                const changedLessons = Array.from(lessonsMap.values()).sort(
+                    (a, b) => a.Date.Timestamp - b.Date.Timestamp
+                );
+
+                const lessonsByDate = changedLessons.reduce((acc, lesson) => {
+                    const dateKey = `${lesson.Date.DateDisplay},${lesson.Date.Date}`;
+
+                    if (!acc[dateKey]) {
+                        acc[dateKey] = [];
+                    }
+
+                    acc[dateKey].push(lesson);
+                    return acc;
+                }, {} as Record<string, LessonEnvelope[]>);
+
+                const response = Object.entries(lessonsByDate).map(
+                    ([date, lessons]) => {
+                        const splittedDate = date.split(",");
+
+                        const displayDate = splittedDate[0];
+                        const dateObj = new Date(splittedDate[1]);
+                        const dayOfWeek = daysOfTheWeek[dateObj.getDay()];
+
+                        const lessonsDisplay = lessons
+                            .sort(
+                                (a, b) =>
+                                    a.TimeSlot.Position - b.TimeSlot.Position
+                            )
+                            .map(getLessonDisplay)
+                            .join("\n");
+                        return `*${displayDate} (${dayOfWeek})*\n${lessonsDisplay}`;
+                    }
+                );
+
+                if (response.length > 0) {
+                    return ctx.reply(response.join("\n\n"), {
+                        parse_mode: "Markdown",
+                    });
+                } else {
+                    return ctx.reply(
+                        "W Toyocie nie ma płynu do kierunkowskazów."
+                    );
+                }
+            } catch (err) {
+                return ctx.reply(
+                    "Komputer pokładowy Toyoty dostał nieprawidłową datę."
+                );
+            }
         } catch (error) {
             return ctx.reply(
                 "Komputer pokładowy Toyoty ma ustawioną nieprawidłową datę. Użyj dat w formacie DD.MM.YYYY."

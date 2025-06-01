@@ -58,9 +58,15 @@ export class Client extends Telegraf {
             );
         }
 
-        cron.schedule("1 18 * 1-6,9-12 1-5", async () => {
-            await sendLuckyNumbers(this);
-        });
+        cron.schedule(
+            "1 18 * 1-6,9-12 1-5",
+            async () => {
+                await sendLuckyNumbers(this);
+            },
+            {
+                timezone: "Europe/Warsaw",
+            }
+        );
 
         console.log("Scheduled task for lucky numbers is set up.");
     }

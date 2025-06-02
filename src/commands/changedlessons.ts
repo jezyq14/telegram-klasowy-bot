@@ -80,7 +80,7 @@ new Command(
                 : new Date();
             const toDate = args[1]
                 ? getDateFromDDMMYYYYFormat(args[1])
-                : new Date(fromDate.getTime() + 24 * 60 * 60 * 1000);
+                : fromDate;
 
             if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
                 return ctx.reply(

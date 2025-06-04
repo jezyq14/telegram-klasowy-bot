@@ -57,6 +57,9 @@ export class Client extends Telegraf {
             /* Database */
             await this.database.connectToDatabase();
 
+            /* Substitutions */
+            await this.handleSubstitutions();
+
             this.launch();
             console.log("Bot is running...");
         } catch (err) {

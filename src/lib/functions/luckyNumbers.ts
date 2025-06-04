@@ -45,7 +45,11 @@ export const sendLuckyNumbers = async (
         await client.telegram.sendMessage(chatId, message, {
             message_thread_id: threadId,
         });
-        console.log("Lucky numbers sent successfully.");
+        console.log(
+            `${new Date().toLocaleDateString(
+                "pl"
+            )} Lucky numbers sent successfully.`
+        );
     } catch (err) {
         console.error("Failed to send lucky numbers:", err);
     }

@@ -1,15 +1,21 @@
+import { VulcanHebeCe, Keypair, VulcanJwtRegister } from "hebece";
 import { Telegraf } from "telegraf";
 import cron from "node-cron";
-
-import { sendLuckyNumbers, CommandData } from "..";
-import config from "../../config";
 import { glob } from "glob";
-import { VulcanHebeCe, Keypair, VulcanJwtRegister } from "hebece";
+
+import {
+    sendLuckyNumbers,
+    CommandData,
+    Database,
+    handleSubstitutions,
+} from "..";
+import config from "../../config";
 
 export class Client extends Telegraf {
-    public hebece!: VulcanHebeCe;
-    public hebece2!: VulcanHebeCe;
     public commands: Map<string, CommandData> = new Map();
+    public database: Database = new Database();
+    public hebece2!: VulcanHebeCe;
+    public hebece!: VulcanHebeCe;
 
     constructor() {
         if (!config.token) {
@@ -38,12 +44,18 @@ export class Client extends Telegraf {
         });
 
         try {
+            /* Core */
             await this.handleCommands();
             await this.handleLuckyNumbers();
 
+            /* HebeCE */
             await this.loginIntoHebece();
 
+            /* Bot commands */
             await this.setBotCommands();
+
+            /* Database */
+            await this.database.connectToDatabase();
 
             this.launch();
             console.log("Bot is running...");
@@ -94,22 +106,42 @@ export class Client extends Telegraf {
     }
 
     public async loginIntoHebece() {
-        const keypair = await new Keypair().init();
-        const keypair2 = await new Keypair().init();
+        try {
+            const keypair = await new Keypair().init();
+            const keypair2 = await new Keypair().init();
 
-        await new VulcanJwtRegister(keypair, config.vulcanApiApContent).init();
-        await new VulcanJwtRegister(
-            keypair2,
-            config.vulcanApiAp2Content
-        ).init();
+            await new VulcanJwtRegister(
+                keypair,
+                config.vulcanApiApContent
+            ).init();
+            await new VulcanJwtRegister(
+                keypair2,
+                config.vulcanApiAp2Content
+            ).init();
 
-        this.hebece = new VulcanHebeCe(keypair);
-        this.hebece2 = new VulcanHebeCe(keypair2);
+            this.hebece = new VulcanHebeCe(keypair);
+            this.hebece2 = new VulcanHebeCe(keypair2);
 
-        await this.hebece.connect();
-        await this.hebece.selectStudent();
+            await this.hebece.connect();
+            await this.hebece.selectStudent();
 
-        await this.hebece2.connect();
-        await this.hebece2.selectStudent();
+            await this.hebece2.connect();
+            await this.hebece2.selectStudent();
+
+            console.log("Logged into HebeCE successfully.");
+        } catch (error) {
+            console.error("Failed to log into HebeCE:", error);
+            throw new Error(
+                "HebeCE login failed. Please check your configuration."
+            );
+        }
+    }
+
+    public async handleSubstitutions() {
+        /* Check every 15 minutes */
+        setInterval(async () => {
+            handleSubstitutions(this);
+        }, 1000 * 60 * 15);
+        handleSubstitutions(this);
     }
 }

@@ -9,4 +9,5 @@ export default {
     schoolWebsiteUrl: process.env.SCHOOL_WEBSITE_URL,
     vulcanApiApContent: process.env.VULCAN_API_AP_CONTENT,
     vulcanApiAp2Content: process.env.VULCAN_API_AP2_CONTENT,
+    mongoUri: process.env.MONGO_URI,
 };

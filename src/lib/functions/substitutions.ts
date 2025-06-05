@@ -31,6 +31,7 @@ export async function handleSubstitutions(client: Client) {
             })
         )
             return;
+
         let text = "";
 
         switch (lesson.Change.Type) {

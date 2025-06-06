@@ -39,11 +39,12 @@ export const sendLuckyNumbers = async (
     chatId: string = config.telegram.chatId,
     threadId: number = config.telegram.threadId
 ): Promise<void> => {
-    const message = await getLuckyNumbersMessage();
+    const message = await getLuckyNumbersMessageWithHeader();
 
     try {
         await client.telegram.sendMessage(chatId, message, {
             message_thread_id: threadId,
+            parse_mode: "Markdown",
         });
         console.log(
             `${new Date().toLocaleDateString(
@@ -59,6 +60,14 @@ export const getLuckyNumbersMessage = async () => {
     const data = await getLuckyNumbers();
 
     return `Szczęśliwe numerki na ${
+        data.dayOfTheWeek
+    }: ${data.luckyNumbers.join(", ")}`;
+};
+
+export const getLuckyNumbersMessageWithHeader = async () => {
+    const data = await getLuckyNumbers();
+
+    return `*Szczęśliwe numerki!*\n\nSzczęśliwe numerki na ${
         data.dayOfTheWeek
     }: ${data.luckyNumbers.join(", ")}`;
 };

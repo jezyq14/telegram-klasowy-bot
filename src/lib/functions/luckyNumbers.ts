@@ -59,6 +59,10 @@ export const sendLuckyNumbers = async (
 export const getLuckyNumbersMessage = async () => {
     const data = await getLuckyNumbers();
 
+    if (!data.luckyNumbers.length) {
+        return "Nie znaleziono szczęśliwych numerków.";
+    }
+
     return `Szczęśliwe numerki na ${
         data.dayOfTheWeek
     }: ${data.luckyNumbers.join(", ")}`;
@@ -67,7 +71,8 @@ export const getLuckyNumbersMessage = async () => {
 export const getLuckyNumbersMessageWithHeader = async () => {
     const data = await getLuckyNumbers();
 
-    return `*Szczęśliwe numerki!*\n\nSzczęśliwe numerki na ${
-        data.dayOfTheWeek
-    }: ${data.luckyNumbers.join(", ")}`;
+    if (data.luckyNumbers.length)
+        return `*Szczęśliwe numerki!*\n\nSzczęśliwe numerki na ${
+            data.dayOfTheWeek
+        }: ${data.luckyNumbers.join(", ")}`;
 };

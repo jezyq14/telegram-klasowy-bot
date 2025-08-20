@@ -10,4 +10,4 @@ Prosty bot do telegrama klasowego (nisko jakościowy kod, proszę nie gryść)
 
 ## Plany:
 
-
+-   brak ;p

@@ -1,6 +1,6 @@
 # telegram-klasowy-bot
 
-Prosty bot do telegrama klasowego (nisko jakościowy kod, proszę nie gryść)
+Prosty bot do telegrama klasowego
 
 ## Ficzury:
 
